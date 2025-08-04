@@ -28,10 +28,21 @@ function App() {
    can eventually add in a way to pass arg so the display can be updated
    with some appstate like a date range, for now default: 'display all'
   */
-  const updateDisplay = () => {
+  const updateDisplay = async () => {
     if (!database) return;
 
-    const allEntries = database.getAllEntries();
+    const fetchEntriesFromAPI = async () => {
+      const response = await fetch('http://localhost:5000/api/entries');
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch entries');
+      }
+
+      const data = await response.json();
+      return data.data; // Go returns {success: true, data: [...]}
+    };
+
+    const allEntries = await fetchEntriesFromAPI();
     setEntries(allEntries);
     console.log("Fetched all entries:\n", allEntries);
   }
@@ -75,12 +86,31 @@ function App() {
       ...eff
     };
 
-    database.addEntry(fullEntry);
-    console.log("Entry saved", fullEntry);
+    addEntryToAPI(fullEntry).then(() => {
+      console.log("Record added", fullEntry);
 
-    if (showEntries) {
-      updateDisplay();
+      if (showEntries) {
+        updateDisplay();
+      }
+    }).catch(error => {
+      console.error("Failed to add record:", error);
+    });
+  };
+
+  const addEntryToAPI = async (entry: Entry) => {
+    const response = await fetch('http://localhost:5000/api/entries', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(entry)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to add entry');
     }
+
+    return response.json();
   };
 
   const formatDateForInput = (date: Date): string => {
@@ -182,7 +212,7 @@ function App() {
                   entries.map((entry) => (
                     <tr key={entry.id}>
                       <td className="dateVal">
-                        {entry.date.toLocaleDateString()}</td>
+                        {new Date(entry.date).toLocaleDateString()}</td>
                       <td>{entry.odo.toFixed(0)}</td>
                       <td>{entry.trip.toFixed(1)}mi</td>
                       <td>{entry.gallons.toFixed(3)}</td>
