@@ -17,22 +17,23 @@ function App() {
     notes: ""
   })
 
-  const handleDisplayAll = () => {
-    updateDisplay();
+  const handleDisplayToggle = () => {
+    if (!showEntries) {
+      updateDisplay();
+    }
     setShowEntries(!showEntries);
   }
 
+  /*
+   can eventually add in a way to pass arg so the display can be updated
+   with some appstate like a date range, for now default: 'display all'
+  */
   const updateDisplay = () => {
     if (!database) return;
-    /* can eventually pass in a filter object to select a date range, user-added
-       span, etc. For now this just updates as if 'display all' option selected */
-    if (showEntries) {
-      // TODO: make this explicitly the 'display all' branch
-      const allEntries = database.getAllEntries();
-      setEntries(allEntries);
-      console.log("Fetched all entries:\n", allEntries);
-    }
 
+    const allEntries = database.getAllEntries();
+    setEntries(allEntries);
+    console.log("Fetched all entries:\n", allEntries);
   }
 
   useEffect(() => {
@@ -76,7 +77,10 @@ function App() {
 
     database.addEntry(fullEntry);
     console.log("Entry saved", fullEntry);
-    updateDisplay();
+
+    if (showEntries) {
+      updateDisplay();
+    }
   };
 
   const formatDateForInput = (date: Date): string => {
@@ -138,38 +142,47 @@ function App() {
           ${eff.cpm.toFixed(3)}/mi -
           ${eff.cost.toFixed(2)} fillup</p>
 
-        <button type="submit">Submit Entry</button><br />
+        <button type="submit">Submit Entry</button>
 
-        <label htmlFor="showAll">Show All Entries</label>
+        <label htmlFor="showEntries">Show Entries</label>
         <input type="checkBox"
-          name="showAll"
-          onChange={handleDisplayAll} />
+          name="showEntries"
+          onChange={handleDisplayToggle} />
 
         {showEntries && entries.length > 0 && (
           <div style={{ marginTop: '10px' }}>
-            {entries.map(entry => (
-              <div key={entry.id}
-                style={{
-                  border: '1px solid #ccc',
-                  padding: '10px',
-                  margin: '5px',
-                  fontSize: '10pt'
-                }}>
-                <strong>{entry.date.toLocaleDateString()}</strong>&nbsp;
-                {entry.odo}mi,&nbsp;
-                {entry.trip}mi trip,&nbsp;
-                {entry.gallons}gal<br />
-                ${entry.pricePerGal}/gal,&nbsp;
-                {entry.mpg.toFixed(1)}mpg,&nbsp;
-                ${entry.cpm.toFixed(3)}/mi,&nbsp;
-                ${entry.cost.toFixed(2)} total<br />
-                {entry.notes && <small><b>Notes:</b>&nbsp;{entry.notes}</small>}
-              </div>
-            ))}
+            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#222222', textAlign: 'center', fontSize: '12pt' }}>
+                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Date</small></th>
+                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Mileage</small></th>
+                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Trip</small></th>
+                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Gallons</small></th>
+                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>$/Gal</small></th>
+                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>MPG</small></th>
+                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>$/Mi</small></th>
+                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Fillup</small></th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  entries.map((entry) => (
+                    <tr key={entry.id} style={{ fontSize: '8pt', textAlign: 'center' }}>
+                      <td>{entry.date.toLocaleDateString()}</td>
+                      <td>{entry.odo.toFixed(0)}</td>
+                      <td>{entry.trip.toFixed(1)}mi</td>
+                      <td>{entry.gallons.toFixed(3)}</td>
+                      <td>${entry.pricePerGal.toFixed(3)}</td>
+                      <td>{entry.mpg.toFixed(1)}</td>
+                      <td>${entry.cpm.toFixed(3)}</td>
+                      <td>${entry.cost.toFixed(2)}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
           </div>
-        )
-        }
-
+        )}
       </form >
     </div >
   )
