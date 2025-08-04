@@ -96,6 +96,7 @@ function App() {
           <input type="date"
             id="date"
             name="date"
+            tabIndex={0}
             value={formatDateForInput(formData.date)}
             onChange={handleChange} />
         </p>
@@ -104,6 +105,7 @@ function App() {
             inputMode="decimal"
             id="odo"
             name="odo"
+            tabIndex={1}
             value={formData.odo}
             onChange={handleChange} />
         </p>
@@ -112,6 +114,7 @@ function App() {
             inputMode="decimal"
             id="trip"
             name="trip"
+            tabIndex={2}
             value={formData.trip}
             onChange={handleChange} />
         </p>
@@ -120,6 +123,7 @@ function App() {
             inputMode="decimal"
             id="gallons"
             name="gallons"
+            tabIndex={3}
             value={formData.gallons}
             onChange={handleChange} />
         </p>
@@ -128,6 +132,7 @@ function App() {
             inputMode="decimal"
             id="pricePerGal"
             name="pricePerGal"
+            tabIndex={4}
             value={formData.pricePerGal}
             onChange={handleChange} />
         </p>
@@ -135,47 +140,56 @@ function App() {
           <input type="text"
             id="notes"
             name="notes"
+            tabIndex={5}
             value={formData.notes}
             onChange={handleChange} />
         </p>
-        <p>{eff.mpg.toFixed(2)} mpg -
+        <p style={{ fontSize: '8pt', textAlign: 'center' }}>
+          {eff.mpg.toFixed(2)} mpg -
           ${eff.cpm.toFixed(3)}/mi -
           ${eff.cost.toFixed(2)} fillup</p>
 
-        <button type="submit">Submit Entry</button>
-
-        <label htmlFor="showEntries">Show Entries</label>
-        <input type="checkBox"
-          name="showEntries"
-          onChange={handleDisplayToggle} />
+        <div className="controls-container">
+          <div className="checkBoxWrapper">
+            <label htmlFor="showEntries" style={{ fontSize: '8pt', marginRight: '10px' }}>Show Entries</label>
+            <input type="checkBox"
+              style={{ boxSizing: 'border-box' }}
+              name="showEntries"
+              checked={showEntries}
+              onChange={handleDisplayToggle} />
+          </div>
+          <button className="submit-button"
+            type="submit">Submit Entry</button>
+        </div>
 
         {showEntries && entries.length > 0 && (
           <div style={{ marginTop: '10px' }}>
-            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <table className="entry-table">
               <thead>
-                <tr style={{ backgroundColor: '#222222', textAlign: 'center', fontSize: '12pt' }}>
-                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Date</small></th>
-                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Mileage</small></th>
-                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Trip</small></th>
-                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Gallons</small></th>
-                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>$/Gal</small></th>
-                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>MPG</small></th>
-                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>$/Mi</small></th>
-                  <th style={{ border: '1px solid #ccc', padding: '5px' }}><small>Fillup</small></th>
+                <tr>
+                  <th>Date</th>
+                  <th>mi</th>
+                  <th>Trip</th>
+                  <th>G</th>
+                  <th>$/G</th>
+                  <th>mpg</th>
+                  <th>$/mi</th>
+                  <th>Cost</th>
                 </tr>
               </thead>
               <tbody>
                 {
                   entries.map((entry) => (
-                    <tr key={entry.id} style={{ fontSize: '8pt', textAlign: 'center' }}>
-                      <td>{entry.date.toLocaleDateString()}</td>
+                    <tr key={entry.id}>
+                      <td className="dateVal">
+                        {entry.date.toLocaleDateString()}</td>
                       <td>{entry.odo.toFixed(0)}</td>
                       <td>{entry.trip.toFixed(1)}mi</td>
                       <td>{entry.gallons.toFixed(3)}</td>
                       <td>${entry.pricePerGal.toFixed(3)}</td>
-                      <td>{entry.mpg.toFixed(1)}</td>
-                      <td>${entry.cpm.toFixed(3)}</td>
-                      <td>${entry.cost.toFixed(2)}</td>
+                      <td className="computedVal">{entry.mpg.toFixed(1)}</td>
+                      <td className="computedVal">${entry.cpm.toFixed(3)}</td>
+                      <td className="computedVal">${entry.cost.toFixed(2)}</td>
                     </tr>
                   ))
                 }

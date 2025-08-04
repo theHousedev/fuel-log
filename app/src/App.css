@@ -1,0 +1,63 @@
+#root {
+  max-width: 900px;
+  margin: 0;
+  padding: 2rem;
+  text-align: right;
+  font-family: Verdana;
+  zoom: 150%;
+  overflow-x: hidden;
+}
+
+.submit-button {
+  font-size: 8pt;
+  margin: 0.5em;
+  padding: 8px;
+}
+
+.entry-table {
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 5pt;
+  width: 100%;
+}
+
+.entry-table th,
+.entry-table td {
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  text-align: center;
+}
+
+.entry-table th {
+  background-color: #213d20;
+  color: #fff;
+  padding: 1px;
+}
+
+.dateVal {
+  color: #979797;
+}
+
+.computedVal {
+  color: #649764;
+}
+
+.controls-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  vertical-align: center;
+  width: 100%;
+  margin-top: 1em;
+}
+
+.checkBoxWrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  vertical-align: center;
+}
